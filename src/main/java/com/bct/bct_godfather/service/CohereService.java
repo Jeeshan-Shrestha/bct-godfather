@@ -1,5 +1,6 @@
 package com.bct.bct_godfather.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,54 +21,69 @@ public class CohereService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public String getResponse(String prompt) {
+    // channelId -> message history
+    private final Map<String, List<Map<String, String>>> chatHistory = new HashMap<>();
+
+    private static final int MAX_MESSAGES = 20;
+
+    public String getResponse(String channelId, String prompt) {
 
         try {
-
             String url = "https://api.cohere.com/v2/chat";
 
-            HttpHeaders headers = new HttpHeaders();
+           
+            chatHistory.putIfAbsent(channelId, new ArrayList<>());
+            List<Map<String, String>> history = chatHistory.get(channelId);
 
+            
+            history.add(Map.of(
+                    "role", "user",
+                    "content", prompt
+            ));
+
+           
+            if (history.size() > MAX_MESSAGES) {
+                history = history.subList(history.size() - MAX_MESSAGES, history.size());
+                chatHistory.put(channelId, history);
+            }
+
+            
+            HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(apiKey);
             headers.setContentType(MediaType.APPLICATION_JSON);
 
+            List<Map<String, String>> messages = new ArrayList<>();
+
+            // system prompt (important)
+            messages.add(Map.of(
+                    "role", "system",
+                    "content",
+                    """
+                    You are a Discord bot for BCT081 students.
+                    Be helpful, polite, and concise.
+                    """
+            ));
+
+            // add history
+            messages.addAll(history);
+
             Map<String, Object> body = new HashMap<>();
-
             body.put("model", "command-a-plus-05-2026");
-
-            List<Map<String, String>> messages = List.of(
-                    Map.of(
-                            "role", "user",
-                            "content",
-                            """
-                            You are a Discord bot.
-
-                            Rules:
-                            - YOU ARE A DISCORD BOT FOR BCT081 BATCH
-                            - YOU ARE A BOT THAT WILL HELP THE FUTURE COMPUTER ENGINEER
-                            - YOU WILL RESPONSE POLITELY
-
-                            User:%s
-                            """.formatted(prompt)));
-
             body.put("messages", messages);
 
-            HttpEntity<Map<String, Object>> entity =
-                    new HttpEntity<>(body, headers);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
             ResponseEntity<Map> response =
                     restTemplate.postForEntity(url, entity, Map.class);
 
-           Map responseBody = response.getBody();
+            Map responseBody = response.getBody();
 
-            System.out.println(responseBody);
+            if (responseBody == null || !responseBody.containsKey("message")) {
+                return "No response from AI 💀";
+            }
 
             Map<String, Object> message =
                     (Map<String, Object>) responseBody.get("message");
-
-            if (message == null) {
-                return "No message returned 💀";
-            }
 
             List<Map<String, Object>> content =
                     (List<Map<String, Object>>) message.get("content");
@@ -86,10 +102,17 @@ public class CohereService {
             }
 
             if (text == null) {
-                return "No text field in response 💀";
+                return "No text response 💀";
             }
 
-            return text.toString();
+            
+            history.add(Map.of(
+                    "role", "assistant",
+                    "content", text
+            ));
+
+            return text;
+
         } catch (Exception e) {
             e.printStackTrace();
             return "AI request failed 💀";

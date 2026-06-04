@@ -42,7 +42,7 @@ public class BotEventListener extends ListenerAdapter {
                     .replace(event.getJDA().getSelfUser().getAsMention(), "")
                     .trim();
 
-            String reply = cohereService.getResponse(prompt);
+            String reply = cohereService.getResponse(event.getChannel().getId(),prompt);
             if (reply.length() > 1900) {
                 reply = reply.substring(0, 1900);
             }
