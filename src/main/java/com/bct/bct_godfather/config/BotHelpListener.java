@@ -15,11 +15,14 @@ public class BotHelpListener extends ListenerAdapter {
             String content = event.getMessage().getContentRaw();
     
             if (content.equalsIgnoreCase("..!help")) {
-                String helpMessage = "```Available commands:\n" +
-                        "!help - Show this help message\n" +
-                        "ping dikesh - Spam ping dikesh \n"+
-                        "@BCT081-GodFather - Get a helpful reply\n"+
-                        "?afk [reason] - Set your AFK status with an optional reason\n```";
+                String helpMessage = "```Available commands:\n\n" +
+                        "!help - Show this help message\n\n" +
+                        "ping dikesh - Spam ping dikesh \n\n"+
+                        "@BCT081-GodFather - Get a helpful reply\n\n"+
+                        "?afk [reason] - Set your AFK status with an optional reason\n\n" +
+                        "/manga {manga_name} - to search for the mangas \n\n"+
+                        "/chapters {manga_id} - to get all the chapters from the manga \n\n" + 
+                        "/read {chapter_id} - get the downloadable pdf file for that chapter \n\n```";
     
                 event.getChannel().sendMessage(helpMessage).queue();
             }
