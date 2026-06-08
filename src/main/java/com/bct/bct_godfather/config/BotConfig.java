@@ -2,8 +2,10 @@ package com.bct.bct_godfather.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 import com.bct.bct_godfather.manga.MangaCommand;
+import com.bct.bct_godfather.service.PdfService;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -17,16 +19,19 @@ public class BotConfig {
     @org.springframework.beans.factory.annotation.Value("${discord.bot.token}")
     private String token;   
 
+    private final PdfService pdfService;
+
     private final BotEventListener botEventListener;
     private final AfkCommand afkCommand;
     private final BotHelpListener botHelpListener;
     private final SpamPingDikesh spamPingDikesh;
 
-    public BotConfig(BotEventListener botEventListener, AfkCommand afkCommand, BotHelpListener botHelpListener, SpamPingDikesh spamPingDikesh) {
+    public BotConfig(BotEventListener botEventListener, AfkCommand afkCommand, BotHelpListener botHelpListener, SpamPingDikesh spamPingDikesh,PdfService pdfService) {
         this.botEventListener = botEventListener;
         this.afkCommand = afkCommand;
         this.botHelpListener = botHelpListener;
         this.spamPingDikesh = spamPingDikesh;
+        this.pdfService = pdfService;
     }
     
     @Bean
@@ -37,7 +42,7 @@ public class BotConfig {
                 GatewayIntent.MESSAGE_CONTENT,
                 GatewayIntent.GUILD_VOICE_STATES
             )
-            .addEventListeners(mangaCommand, botEventListener, afkCommand, botHelpListener, spamPingDikesh)
+            .addEventListeners(pdfService,mangaCommand, botEventListener, afkCommand, botHelpListener, spamPingDikesh)
             .build()
             .awaitReady();
 
@@ -48,7 +53,9 @@ public class BotConfig {
        Commands.slash("chapters", "Get latest chapters for a manga")
            .addOption(OptionType.STRING, "manga_id", "MangaDex manga UUID", true),
        Commands.slash("read", "Send the first page of a chapter")
-           .addOption(OptionType.STRING, "chapter_id", "MangaDex chapter UUID", true)
+           .addOption(OptionType.STRING, "chapter_id", "MangaDex chapter UUID", true),
+        Commands.slash("cover", "get the cover page for DSA with your roll number")
+            .addOption(OptionType.STRING, "roll_no","desc",true)
    ).queue();
 
         return jda;
