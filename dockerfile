@@ -1,8 +1,9 @@
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:21-jdk-jammy
 
-WORKDIR /app
-COPY . .
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libreoffice-writer && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN ./mvnw clean package -DskipTests
-
-CMD ["java", "-jar", "target/EclipseBot-0.0.1-SNAPSHOT.jar"]
+COPY target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "/app.jar"]

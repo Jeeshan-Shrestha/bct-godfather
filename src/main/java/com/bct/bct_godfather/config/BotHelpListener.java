@@ -23,7 +23,7 @@ public class BotHelpListener extends ListenerAdapter {
                         "/manga {manga_name} - to search for the mangas \n\n"+
                         "/chapters {manga_id} - to get all the chapters from the manga \n\n" + 
                         "/read {chapter_id} - get the downloadable pdf file for that chapter \n\n"+
-                        "/coverpage {roll_no} - get the cover page with your name on it for DSA\n\n```";
+                        "/cover {roll_no} - get the cover page with your name on it for DSA\n\n```";
     
                 event.getChannel().sendMessage(helpMessage).queue();
             }
