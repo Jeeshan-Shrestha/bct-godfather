@@ -1,9 +1,11 @@
-package com.bct.bct_godfather.service;
+package com.bct.bct_godfather.config;
 
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.bct.bct_godfather.service.CoverService;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

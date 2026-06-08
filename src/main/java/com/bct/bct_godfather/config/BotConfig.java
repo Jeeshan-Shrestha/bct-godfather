@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 import com.bct.bct_godfather.manga.MangaCommand;
-import com.bct.bct_godfather.service.PdfService;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -25,24 +24,27 @@ public class BotConfig {
     private final AfkCommand afkCommand;
     private final BotHelpListener botHelpListener;
     private final SpamPingDikesh spamPingDikesh;
+    private final PdfBotListener pdfBotListener;
 
-    public BotConfig(BotEventListener botEventListener, AfkCommand afkCommand, BotHelpListener botHelpListener, SpamPingDikesh spamPingDikesh,PdfService pdfService) {
+    public BotConfig(PdfBotListener pdfBotListener,BotEventListener botEventListener, AfkCommand afkCommand, BotHelpListener botHelpListener, SpamPingDikesh spamPingDikesh,PdfService pdfService) {
         this.botEventListener = botEventListener;
         this.afkCommand = afkCommand;
         this.botHelpListener = botHelpListener;
         this.spamPingDikesh = spamPingDikesh;
         this.pdfService = pdfService;
+        this.pdfBotListener = pdfBotListener;
     }
     
     @Bean
-    public JDA jda(MangaCommand mangaCommand) throws Exception {
+    public JDA jda(MangaCommand mangaCommand,
+                DocxConvertListener docxConvertListener) throws Exception {
 
         JDA jda = JDABuilder.createDefault(token,
                 GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.MESSAGE_CONTENT,
                 GatewayIntent.GUILD_VOICE_STATES
             )
-            .addEventListeners(pdfService,mangaCommand, botEventListener, afkCommand, botHelpListener, spamPingDikesh)
+            .addEventListeners(docxConvertListener,pdfBotListener,pdfService,mangaCommand, botEventListener, afkCommand, botHelpListener, spamPingDikesh)
             .build()
             .awaitReady();
 
@@ -55,7 +57,10 @@ public class BotConfig {
        Commands.slash("read", "Send the first page of a chapter")
            .addOption(OptionType.STRING, "chapter_id", "MangaDex chapter UUID", true),
         Commands.slash("cover", "get the cover page for DSA with your roll number")
-            .addOption(OptionType.STRING, "roll_no","desc",true)
+            .addOption(OptionType.STRING, "roll_no","desc",true),
+        Commands.slash("pdf-to-docx", "convert pdf file to docx")
+            .addOption(OptionType.ATTACHMENT, "file", "The PDF file", true),
+        DocxConvertListener.getCommandData()
    ).queue();
 
         return jda;
