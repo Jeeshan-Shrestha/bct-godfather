@@ -1,7 +1,11 @@
 FROM eclipse-temurin:21-jdk
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libreoffice-writer && \
+    apt-get install -y --no-install-recommends \
+        libreoffice-writer \
+        fonts-liberation \
+        fonts-dejavu \
+        fontconfig && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

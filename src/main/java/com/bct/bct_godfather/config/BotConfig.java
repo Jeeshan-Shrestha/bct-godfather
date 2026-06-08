@@ -48,7 +48,7 @@ public class BotConfig {
             .build()
             .awaitReady();
 
-        jda.getGuildById("1510692666235556033")
+        jda
    .updateCommands().addCommands(
        Commands.slash("manga", "Search for manga on MangaDex")
            .addOption(OptionType.STRING, "search", "Manga title", true),
