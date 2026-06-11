@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+import com.bct.bct_godfather.homework.HomeworkCommand;
 import com.bct.bct_godfather.manga.MangaCommand;
 
 import net.dv8tion.jda.api.JDA;
@@ -25,14 +26,22 @@ public class BotConfig {
     private final BotHelpListener botHelpListener;
     private final SpamPingDikesh spamPingDikesh;
     private final PdfBotListener pdfBotListener;
+    private final HomeworkCommand homeworkCommand;
 
-    public BotConfig(PdfBotListener pdfBotListener,BotEventListener botEventListener, AfkCommand afkCommand, BotHelpListener botHelpListener, SpamPingDikesh spamPingDikesh,PdfService pdfService) {
+    public BotConfig(PdfBotListener pdfBotListener,
+        BotEventListener botEventListener, 
+        AfkCommand afkCommand, 
+        BotHelpListener botHelpListener, 
+        SpamPingDikesh spamPingDikesh,
+        PdfService pdfService,
+        HomeworkCommand homeworkCommand) {
         this.botEventListener = botEventListener;
         this.afkCommand = afkCommand;
         this.botHelpListener = botHelpListener;
         this.spamPingDikesh = spamPingDikesh;
         this.pdfService = pdfService;
         this.pdfBotListener = pdfBotListener;
+        this.homeworkCommand = homeworkCommand;
     }
     
     @Bean
@@ -44,12 +53,13 @@ public class BotConfig {
                 GatewayIntent.MESSAGE_CONTENT,
                 GatewayIntent.GUILD_VOICE_STATES
             )
-            .addEventListeners(docxConvertListener,pdfBotListener,pdfService,mangaCommand, botEventListener, afkCommand, botHelpListener, spamPingDikesh)
+            .addEventListeners(homeworkCommand,docxConvertListener,pdfBotListener,pdfService,mangaCommand, botEventListener, afkCommand, botHelpListener, spamPingDikesh)
             .build()
             .awaitReady();
 
         jda
-   .updateCommands().addCommands(
+   .updateCommands()
+   .addCommands(
        Commands.slash("manga", "Search for manga on MangaDex")
            .addOption(OptionType.STRING, "search", "Manga title", true),
        Commands.slash("chapters", "Get latest chapters for a manga")
@@ -60,7 +70,12 @@ public class BotConfig {
             .addOption(OptionType.STRING, "roll_no","desc",true),
         Commands.slash("pdf-to-docx", "convert pdf file to docx")
             .addOption(OptionType.ATTACHMENT, "file", "The PDF file", true),
-        DocxConvertListener.getCommandData()
+        DocxConvertListener.getCommandData(),
+        Commands.slash("homework", "Set a homework reminder")
+            .addOption(OptionType.STRING, "subject", "Subject or task name", true)
+            .addOption(OptionType.STRING, "description", "Homework description", true) 
+            .addOption(OptionType.INTEGER, "days", "Days until deadline", true)
+            .addOption(OptionType.STRING, "time", "Time of deadline (HH:mm)", true)
    ).queue();
 
         return jda;
