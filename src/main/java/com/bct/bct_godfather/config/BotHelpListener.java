@@ -25,7 +25,9 @@ public class BotHelpListener extends ListenerAdapter {
                         "/read {chapter_id} - get the downloadable pdf file for that chapter \n\n"+
                         "/pdf-to-docx {file.pdf} - converts pdf to docx file\n\n"+
                         "/docx-to-pdx {file.docx} - converts docx to pdf file\n\n"+
-                        "/homework {subj} {descriptio} {no_of_days} {time} - sets reminder for the homework\n\n"+
+                        "/pptx-to-docx {file.pptx} - converts pptx to pdf\n\n"+ 
+                        "/homework {subj} {descriptio} {no_of_days} {time: XX:XX format} - sets reminder for the homework\n\n"+
+                        "/get-homework - get all the assigned homework"+
                         "/cover {roll_no} - get the cover page with your name on it for DSA\n\n```";
     
                 event.getChannel().sendMessage(helpMessage).queue();

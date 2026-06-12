@@ -70,6 +70,8 @@ public class BotConfig {
             .addOption(OptionType.STRING, "roll_no","desc",true),
         Commands.slash("pdf-to-docx", "convert pdf file to docx")
             .addOption(OptionType.ATTACHMENT, "file", "The PDF file", true),
+        Commands.slash("pptx-to-pdf", "convert pptx file to pdf")
+            .addOption(OptionType.ATTACHMENT, "file", "The pptx file", true),
         DocxConvertListener.getCommandData(),
         Commands.slash("homework", "Set a homework reminder")
             .addOption(OptionType.STRING, "subject", "Subject or task name", true)

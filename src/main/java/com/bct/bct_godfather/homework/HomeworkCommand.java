@@ -42,9 +42,8 @@ public class HomeworkCommand extends ListenerAdapter {
         List<HomeworkReminder> allHomework = repo.findAll();
         if (allHomework.isEmpty()){
             event.getChannel().sendMessage("No Homework YAY").queue();
-            return ;
-        }
-        for (HomeworkReminder homework : allHomework){
+        }else{
+            for (HomeworkReminder homework : allHomework){
 
             EmbedBuilder embed = new EmbedBuilder()
             .setTitle("📚 Homework Reminder")
@@ -57,8 +56,8 @@ public class HomeworkCommand extends ListenerAdapter {
             event.getChannel().sendMessage("Homework Assigned")
             .setEmbeds(embed.build())
             .queue();
+            }
         }
-
     }
 
     public void handleHomework(SlashCommandInteractionEvent event){
