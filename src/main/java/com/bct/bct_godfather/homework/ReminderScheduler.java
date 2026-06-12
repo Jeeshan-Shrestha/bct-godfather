@@ -2,6 +2,7 @@ package com.bct.bct_godfather.homework;
 
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,48 +32,49 @@ public class ReminderScheduler {
     @Autowired
     private HomeworkReminderRepository repo;
 
-    @Scheduled(fixedDelay = 60000) // runs every minute
-    public void checkReminders() {
-        List<HomeworkReminder> reminders = repo.findByDeadlineReminderSentFalse();
-        LocalDateTime now = LocalDateTime.now();
-        TextChannel channel = jda.getTextChannelById(channelId);
-        if (channel == null) return;
+    @Scheduled(fixedDelay = 60000)
+public void checkReminders() {
+    List<HomeworkReminder> reminders = repo.findByDeadlineReminderSentFalse();
+    LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Kathmandu"));
+    TextChannel channel = jda.getTextChannelById(channelId);
+    if (channel == null) return;
 
-        for (HomeworkReminder r : reminders) {
-            LocalDateTime deadline = r.getDeadline();
+    for (HomeworkReminder r : reminders) {
+        LocalDateTime deadline = r.getDeadline();
 
-            if (!r.isOneDayReminderSent() && now.isAfter(deadline.minusDays(1))) {
-    EmbedBuilder embed = new EmbedBuilder()
-        .setTitle("📚 Homework Reminder")
-        .setColor(Color.ORANGE)
-        .addField("Subject", r.getSubject(), false)
-        .addField("Description", r.getDescription(), false)
-        .addField("⏳ Deadline", deadline.format(DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a")), false)
-        .setFooter("You have ~1 day left! Get to work.");
+        if (!r.isOneDayReminderSent() && now.isAfter(deadline.minusDays(1))) {
+            EmbedBuilder embed = new EmbedBuilder()
+                .setTitle("📚 Homework Reminder")
+                .setColor(Color.ORANGE)
+                .addField("Subject", r.getSubject(), false)
+                .addField("Description", r.getDescription(), false)
+                .addField("⏳ Deadline", deadline.format(DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a")), false)
+                .setFooter("You have ~1 day left! Get to work.");
 
-    channel.sendMessage("@everyone")
-        .setEmbeds(embed.build())
-        .queue();
+            channel.sendMessage("@everyone")
+                .setEmbeds(embed.build())
+                .queue();
 
-    r.setOneDayReminderSent(true);
-    repo.save(r);
-}
+            r.setOneDayReminderSent(true);
+            repo.save(r);
 
-if (!r.isDeadlineReminderSent() && now.isAfter(deadline)) {
-    EmbedBuilder embed = new EmbedBuilder()
-        .setTitle("🚨 Deadline Reached!")
-        .setColor(Color.RED)
-        .addField("Subject", r.getSubject(), false)
-        .addField("Description", r.getDescription(), false)
-        .addField("🕐 Was due at", deadline.format(DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a")), false)
-        .setFooter("Submission time is over.");
+        } else if (!r.isDeadlineReminderSent() && now.isAfter(deadline)) {
+            EmbedBuilder embed = new EmbedBuilder()
+                .setTitle("🚨 Deadline Reached!")
+                .setColor(Color.RED)
+                .addField("Subject", r.getSubject(), false)
+                .addField("Description", r.getDescription(), false)
+                .addField("🕐 Was due at", deadline.format(DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a")), false)
+                .setFooter("Submission time is over.");
 
-    channel.sendMessage("@everyone")
-        .setEmbeds(embed.build())
-        .queue();
+            channel.sendMessage("@everyone")
+                .setEmbeds(embed.build())
+                .queue();
 
-    repo.delete(r);
-}
+            r.setDeadlineReminderSent(true);
+            repo.save(r);
+            repo.delete(r);
         }
     }
+}
 }

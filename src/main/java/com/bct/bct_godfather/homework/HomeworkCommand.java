@@ -2,6 +2,7 @@ package com.bct.bct_godfather.homework;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -39,28 +40,26 @@ public class HomeworkCommand extends ListenerAdapter {
 
     public void handleGetHomework(SlashCommandInteractionEvent event){
 
-        event.deferReply().queue();
-        
-        List<HomeworkReminder> allHomework = repo.findAll();
-        if (allHomework.isEmpty()){
-            event.getChannel().sendMessage("No Homework YAY").queue();
-        }else{
-            for (HomeworkReminder homework : allHomework){
-
+    event.deferReply().queue();
+    
+    List<HomeworkReminder> allHomework = repo.findAll();
+    if (allHomework.isEmpty()){
+        event.getHook().sendMessage("No Homework YAY").queue();
+    } else {
+        for (HomeworkReminder homework : allHomework){
             EmbedBuilder embed = new EmbedBuilder()
-            .setTitle("📚 Homework Reminder")
-            .setColor(Color.ORANGE)
-            .addField("Subject", homework.getSubject(), false)
-            .addField("Description", homework.getDescription(), false)
-            .addField("⏳ Deadline", homework.getDeadline().format(DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a")), false);
+                .setTitle("📚 Homework Reminder")
+                .setColor(Color.ORANGE)
+                .addField("Subject", homework.getSubject(), false)
+                .addField("Description", homework.getDescription(), false)
+                .addField("⏳ Deadline", homework.getDeadline().format(DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a")), false);
 
-
-            event.getChannel().sendMessage("Homework Assigned")
-            .setEmbeds(embed.build())
-            .queue();
-            }
+            event.getHook().sendMessage("Homework Assigned")
+                .setEmbeds(embed.build())
+                .queue();
         }
     }
+}
 
     public void handleHomework(SlashCommandInteractionEvent event){
         
@@ -78,10 +77,10 @@ public class HomeworkCommand extends ListenerAdapter {
         String time = event.getOption("time").getAsString(); // "HH:mm"
 
         LocalTime parsedTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("H:mm"));
-        LocalDateTime deadline = LocalDateTime.now().plusDays(days)
-            .withHour(parsedTime.getHour())
-            .withMinute(parsedTime.getMinute())
-            .withSecond(0).withNano(0);
+        LocalDateTime deadline = LocalDateTime.now(ZoneId.of("Asia/Kathmandu")).plusDays(days)
+    .withHour(parsedTime.getHour())
+    .withMinute(parsedTime.getMinute())
+    .withSecond(0).withNano(0);
 
         String description = event.getOption("description") != null 
     ? event.getOption("description").getAsString() 
