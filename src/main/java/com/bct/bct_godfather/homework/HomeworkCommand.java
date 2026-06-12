@@ -38,6 +38,8 @@ public class HomeworkCommand extends ListenerAdapter {
     }
 
     public void handleGetHomework(SlashCommandInteractionEvent event){
+
+        event.deferReply().queue();
         
         List<HomeworkReminder> allHomework = repo.findAll();
         if (allHomework.isEmpty()){
