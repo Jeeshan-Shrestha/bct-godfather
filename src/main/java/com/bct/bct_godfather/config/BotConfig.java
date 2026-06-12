@@ -75,7 +75,8 @@ public class BotConfig {
             .addOption(OptionType.STRING, "subject", "Subject or task name", true)
             .addOption(OptionType.STRING, "description", "Homework description", true) 
             .addOption(OptionType.INTEGER, "days", "Days until deadline", true)
-            .addOption(OptionType.STRING, "time", "Time of deadline (HH:mm)", true)
+            .addOption(OptionType.STRING, "time", "Time of deadline (HH:mm)", true),
+        Commands.slash("get-homework", "Get all the homework assigned")
    ).queue();
 
         return jda;
