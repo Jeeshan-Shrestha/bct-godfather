@@ -32,15 +32,25 @@ public class StudentEventListener extends ListenerAdapter{
     public void handleStudent(SlashCommandInteractionEvent event){
 
         event.deferReply().queue();
-        String id = event.getOption("roll_no").getAsString();
-        String upperCaseId = id.toUpperCase();
-        BctStudent student = studentService.getStudentDetailsById(upperCaseId);
+        String id = event.getOption("roll_no").getAsString().toUpperCase();
+
+        String formatted;
+        if (id.startsWith("THA081BCT")) {
+            formatted = id;
+        } else {
+            String prefix = "THA081BCT";
+            String number = id.replaceAll("[^0-9]", "");
+            int num = Integer.parseInt(number);
+            formatted = prefix + String.format("%03d", num);
+        }
+
+        BctStudent student = studentService.getStudentDetailsById(formatted);
         try{
             if (student == null){
             throw new CustomException("couldnt find the student with that id");
         }
         }catch(CustomException e){
-            event.reply(e.getMessage()).queue();
+            event.getHook().sendMessage("No student with that id found");
         }
         
 
