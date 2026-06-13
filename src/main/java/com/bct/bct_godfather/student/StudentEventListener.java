@@ -38,20 +38,20 @@ public class StudentEventListener extends ListenerAdapter{
         if (id.startsWith("THA081BCT")) {
             formatted = id;
         } else {
-            String prefix = "THA081BCT";
             String number = id.replaceAll("[^0-9]", "");
+            if (number.isEmpty()) {
+                event.getHook().sendMessage("Invalid roll number format").queue();
+                return;
+            }
             int num = Integer.parseInt(number);
-            formatted = prefix + String.format("%03d", num);
+            formatted = "THA081BCT" + String.format("%03d", num);
         }
 
         BctStudent student = studentService.getStudentDetailsById(formatted);
-        try{
-            if (student == null){
-            throw new CustomException("couldnt find the student with that id");
-        }
-        }catch(CustomException e){
+
+        if (student == null) {
             event.getHook().sendMessage("No student with that id found").queue();
-            return ;
+            return;
         }
         
 
