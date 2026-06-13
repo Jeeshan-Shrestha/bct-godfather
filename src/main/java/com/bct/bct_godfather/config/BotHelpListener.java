@@ -28,6 +28,7 @@ public class BotHelpListener extends ListenerAdapter {
                         "/pptx-to-docx {file.pptx} - converts pptx to pdf\n\n"+ 
                         "/homework {subj} {descriptio} {no_of_days} {time: XX:XX format} - sets reminder for the homework\n\n"+
                         "/get-homework - get all the assigned homework"+
+                        "/student {roll_no THA081BCT0XX} - get the details of the student"+
                         "/cover {roll_no} - get the cover page with your name on it for DSA\n\n```";
     
                 event.getChannel().sendMessage(helpMessage).queue();

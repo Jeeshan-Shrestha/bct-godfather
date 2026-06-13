@@ -40,13 +40,14 @@ public class HomeworkCommand extends ListenerAdapter {
 
     public void handleGetHomework(SlashCommandInteractionEvent event){
 
-    event.deferReply().queue();
-    
-    List<HomeworkReminder> allHomework = repo.findAll();
-    if (allHomework.isEmpty()){
-        event.getHook().sendMessage("No Homework YAY").queue();
-    } else {
-        for (HomeworkReminder homework : allHomework){
+        event.deferReply().queue();
+        
+        List<HomeworkReminder> allHomework = repo.findAll();
+        if (allHomework.isEmpty()){
+            event.getHook().sendMessage("No Homework YAY").queue();
+        }else{
+            for (HomeworkReminder homework : allHomework){
+
             EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("📚 Homework Reminder")
                 .setColor(Color.ORANGE)
@@ -54,12 +55,13 @@ public class HomeworkCommand extends ListenerAdapter {
                 .addField("Description", homework.getDescription(), false)
                 .addField("⏳ Deadline", homework.getDeadline().format(DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a")), false);
 
+
             event.getHook().sendMessage("Homework Assigned")
-                .setEmbeds(embed.build())
-                .queue();
+            .setEmbeds(embed.build())
+            .queue();
+            }
         }
     }
-}
 
     public void handleHomework(SlashCommandInteractionEvent event){
         

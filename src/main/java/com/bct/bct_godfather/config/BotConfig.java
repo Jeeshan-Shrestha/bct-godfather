@@ -6,6 +6,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.bct.bct_godfather.homework.HomeworkCommand;
 import com.bct.bct_godfather.manga.MangaCommand;
+import com.bct.student.StudentEventListener;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -27,6 +28,7 @@ public class BotConfig {
     private final SpamPingDikesh spamPingDikesh;
     private final PdfBotListener pdfBotListener;
     private final HomeworkCommand homeworkCommand;
+    private final StudentEventListener studentEventListener;
 
     public BotConfig(PdfBotListener pdfBotListener,
         BotEventListener botEventListener, 
@@ -34,7 +36,8 @@ public class BotConfig {
         BotHelpListener botHelpListener, 
         SpamPingDikesh spamPingDikesh,
         PdfService pdfService,
-        HomeworkCommand homeworkCommand) {
+        HomeworkCommand homeworkCommand,
+        StudentEventListener studentEventListener) {
         this.botEventListener = botEventListener;
         this.afkCommand = afkCommand;
         this.botHelpListener = botHelpListener;
@@ -42,6 +45,7 @@ public class BotConfig {
         this.pdfService = pdfService;
         this.pdfBotListener = pdfBotListener;
         this.homeworkCommand = homeworkCommand;
+        this.studentEventListener = studentEventListener;
     }
     
     @Bean
@@ -53,13 +57,15 @@ public class BotConfig {
                 GatewayIntent.MESSAGE_CONTENT,
                 GatewayIntent.GUILD_VOICE_STATES
             )
-            .addEventListeners(homeworkCommand,docxConvertListener,pdfBotListener,pdfService,mangaCommand, botEventListener, afkCommand, botHelpListener, spamPingDikesh)
+            .addEventListeners(studentEventListener,homeworkCommand,docxConvertListener,pdfBotListener,pdfService,mangaCommand, botEventListener, afkCommand, botHelpListener, spamPingDikesh)
             .build()
             .awaitReady();
 
         jda
    .updateCommands()
    .addCommands(
+       Commands.slash("student", "get the details about the students")
+           .addOption(OptionType.STRING, "roll_no", "THA081BCT0XX",true),
        Commands.slash("manga", "Search for manga on MangaDex")
            .addOption(OptionType.STRING, "search", "Manga title", true),
        Commands.slash("chapters", "Get latest chapters for a manga")
