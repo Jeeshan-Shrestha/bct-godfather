@@ -50,7 +50,8 @@ public class StudentEventListener extends ListenerAdapter{
             throw new CustomException("couldnt find the student with that id");
         }
         }catch(CustomException e){
-            event.getHook().sendMessage("No student with that id found");
+            event.getHook().sendMessage("No student with that id found").queue();
+            return ;
         }
         
 
