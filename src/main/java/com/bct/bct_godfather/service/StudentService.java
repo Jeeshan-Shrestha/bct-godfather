@@ -16,9 +16,6 @@ public class StudentService {
 
     public BctStudent getStudentDetailsById(String id){
         BctStudent student = studentRepo.findById(id).orElse(null);
-        if (student == null){
-            throw new RuntimeException("Student not found in the database");
-        }
         return student;
     }
 

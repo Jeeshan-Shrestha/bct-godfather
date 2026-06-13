@@ -6,7 +6,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.bct.bct_godfather.homework.HomeworkCommand;
 import com.bct.bct_godfather.manga.MangaCommand;
-import com.bct.student.StudentEventListener;
+import com.bct.bct_godfather.student.StudentEventListener;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -85,6 +85,7 @@ public class BotConfig {
             .addOption(OptionType.INTEGER, "days", "Days until deadline", true)
             .addOption(OptionType.STRING, "time", "Time of deadline (HH:mm)", true),
         Commands.slash("get-homework", "Get all the homework assigned")
+
    ).queue();
 
         return jda;

@@ -1,10 +1,11 @@
-package com.bct.student;
+package com.bct.bct_godfather.student;
 
 import java.awt.Color;
 
 import org.springframework.stereotype.Component;
 
 import com.bct.bct_godfather.entity.BctStudent;
+import com.bct.bct_godfather.exception.CustomException;
 import com.bct.bct_godfather.service.StudentService;
 
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -24,7 +25,7 @@ public class StudentEventListener extends ListenerAdapter{
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         switch(event.getName()){
-            case "students" -> handleStudent(event);
+            case "student" -> handleStudent(event);
         }
     }
     
@@ -32,7 +33,16 @@ public class StudentEventListener extends ListenerAdapter{
 
         event.deferReply().queue();
         String id = event.getOption("roll_no").getAsString();
-        BctStudent student = studentService.getStudentDetailsById(id);
+        String upperCaseId = id.toUpperCase();
+        BctStudent student = studentService.getStudentDetailsById(upperCaseId);
+        try{
+            if (student == null){
+            throw new CustomException("couldnt find the student with that id");
+        }
+        }catch(CustomException e){
+            event.reply(e.getMessage()).queue();
+        }
+        
 
         EmbedBuilder embed = new EmbedBuilder()
             .setTitle("Student detail of " + student.getName())
